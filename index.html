@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>demo</title>
+</head>
+<body onload="onMoveSelection()">
+<from style="position: absolute;left: 300px" width="600" height="900">
+     <fieldset >
+         <legend>Racing Game</legend>
+         <input type="button" value="reset" onclick="reset()">
+         <input type="button" value="play" onclick="play()">
+         <p>Score</p>
+         <span id="score"></span>
+         <br>
+         <img src="Img/crazycar.jpg" id="crazyCar" width="45" height="100" alt="CrazyCar">
+         <br>
+         <img src="Img/mycar.jpg" id="myCar" width="45" height="100" alt="MyCar">
+         <br>
+         <img src="Img/mycar2.jpg" id="myCar2" width="45" height="100" alt="MyCar2">
+         <canvas id="myCanvas" style=" left: 100px" width="600" height="900"></canvas>
+     </fieldset>
+
+
+</from>
+<script>
+    let canvas = document.getElementById('myCanvas');
+    let ctx = canvas.getContext("2d");
+    let imgMyCar = document.getElementById('myCar');
+    let imgMyCar2 = document.getElementById('myCar2');
+    let imgCrazyCar = document.getElementById('crazyCar');
+
+    let MyCar = function (x,y,width,height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.direction = "Up";
+
+        this.getMyCar = function () {
+            ctx.drawImage(imgMyCar,this.x,this.y,this.width,this.height);
+        };
+        this.getDirection = function () {
+            switch (this.direction) {
+                case "Right":
+                    this.getMoveRight();
+                    break;
+                case "Left":
+                    this.getMoveLeft();
+                    break;
+                case "Up":
+                    this.getMoveUp();
+                    break;
+                case "Down":
+                    this.getMoveDown();
+                    break
+            }
+        };
+        this.getMoveRight = function () {
+            if(this.x <=canvas.width-this.width)
+                this.x += 4;
+        }
+        this.getMoveLeft = function () {
+            if(this.x>=0)
+                this.x -= 4;
+        }
+        this.getMoveUp = function () {
+            if(this.y <=canvas.height-this.height)
+                this.y += 4;
+        }
+        this.getMoveDown = function () {
+            if(this.y>=0)
+                this.y -= 4;
+        }
+    };
+    let MyCar2 = function (x,y,width,height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.direction = "Up";
+
+        this.getMyCar2 = function () {
+            ctx.drawImage(imgMyCar2,this.x,this.y,this.width,this.height);
+        };
+        this.getDirection = function () {
+            switch (this.direction) {
+                case "phai":
+                    this.getMovePhai();
+                    break;
+                case "trai":
+                    this.getMoveTrai();
+                    break;
+                case "len":
+                    this.getMoveLen();
+                    break;
+                case "xuong":
+                    this.getMoveXuong();
+                    break
+            }
+        };
+        this.getMovePhai = function () {
+            if(this.x <=canvas.width-this.width)
+                this.x += 4;
+        }
+        this.getMoveTrai = function () {
+            if(this.x>=0)
+                this.x -= 4;
+        }
+        this.getMoveXuong = function () {
+            if(this.y <=canvas.height-this.height)
+                this.y += 4;
+        }
+        this.getMoveLen = function () {
+            if(this.y>=0)
+                this.y -= 4;
+        }
+    };
+    function moveSelection(e) {
+        switch (e.keyCode) {
+            case 37:
+                mycar.direction = "Left";
+                break;
+            case 39:
+                mycar.direction = "Right";
+                break;
+            case 40:
+                mycar.direction = "Up";
+                break;
+            case 38:
+                mycar.direction = "Down";
+                break;
+            case 65:
+                mycar2.direction = "trai";
+                break;
+            case 68:
+                mycar2.direction = "phai";
+                break;
+            case 83:
+                mycar2.direction = "xuong";
+                break;
+            case 87:
+                mycar2.direction = "len";
+                break;
+
+
+        }
+    };
+    function onMoveSelection() {
+        window.addEventListener("keydown",moveSelection);
+    };
+    let CrazyCar = function (x,y,width,height,speed) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.speed = speed;
+
+        this.getCrazyCar = function () {
+            ctx.drawImage(imgCrazyCar,this.x,this.y,this.width,this.height);
+        }
+        this.moveCrazyCar = function () {
+            this.y += this.speed;
+        }
+    }
+    let mycar = new MyCar(270,760,60,150);
+    let mycar2 = new MyCar2(100,760,60,150);
+
+    let arrCrazyCar = [];
+    let a = [];
+    let point = 0;
+    let star;
+    let i =0;
+    let makeCrazyCar;
+
+    let createCrazyCar = function () {
+        makeCrazyCar = setInterval(function () {
+            a[i] = Math.round(Math.random()*540);
+            let crazyCar = new CrazyCar(a[i],0,60,150,5);
+            arrCrazyCar.push(crazyCar);
+        },1300);
+    };
+
+    let Game = function () {
+        this.challenges = function () {
+            for(let i=0;i<arrCrazyCar.length;i++)
+            {
+                arrCrazyCar[i].getCrazyCar();
+                arrCrazyCar[i].moveCrazyCar();
+            }
+        };
+        this.deleteCrazyCar = function (arrCrazyCar) {
+            for(let i=0;i<arrCrazyCar.length;i++){
+                if(arrCrazyCar[i].y>canvas.height) {
+                    arrCrazyCar.splice(i,1);
+                    point += 10;
+                }
+            }
+        };
+        this.setGameOver = function (arrCrazyCar) {
+            for(let i=0;i<arrCrazyCar.length;i++){
+                 if(mycar.x < arrCrazyCar[i].x + 60 && mycar.y < arrCrazyCar[i].y + 150 &&
+                     mycar.x > arrCrazyCar[i].x - 60 && mycar.y > arrCrazyCar[i].y-150||
+                     mycar2.x < arrCrazyCar[i].x + 60 && mycar2.y < arrCrazyCar[i].y + 150 &&
+                         mycar2.x > arrCrazyCar[i].x - 60 && mycar2.y > arrCrazyCar[i].y-150){
+                     ctx.font = "100px Georgia"
+                     ctx.fillText("Lose!",160,300);
+                     clearInterval(makeCrazyCar);
+                     clearInterval(star);
+                     break;
+                 }
+            }
+
+        };
+        this.reset = function () {
+            arrCrazyCar=[];
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            clearInterval(makeCrazyCar);
+            clearInterval(star);
+            a=[];
+            point=0;
+            makeCrazyCar=undefined;
+        };
+    }
+    let myGame = new Game();
+
+    let starNewGame = function () {
+        createCrazyCar();
+        star = setInterval(function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            mycar2.getMyCar2();
+            mycar2.getDirection();
+            mycar.getMyCar();
+            mycar.getDirection();
+            myGame.challenges();
+            myGame.setGameOver(arrCrazyCar);
+            myGame.deleteCrazyCar(arrCrazyCar);
+            document.getElementById('score').innerHTML = point;
+            ctx.fillStyle = "#123456";
+            ctx.fillRect(0, 0, 1, 900);
+            ctx.fillRect(0, 0, 700, 1);
+        },10);
+    };
+    starNewGame();
+
+    function reset() {
+        myGame.reset();
+    }
+    function play() {
+        starNewGame();
+    }
+
+
+</script>
+</body>
+</html>
